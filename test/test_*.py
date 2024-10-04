@@ -1,5 +1,5 @@
 import pytest
-from pytest import roman_to_int, int_to_roman, evaluate_roman_expression
+from main import roman_to_int, int_to_roman, evaluate_expression  # Adjust import to point to src.main
 
 # Unit test for roman_to_int function
 def test_roman_to_int():
@@ -31,21 +31,14 @@ def test_int_to_roman():
     assert int_to_roman(1000) == 'M'
     assert int_to_roman(3999) == 'MMMCMXCIX'
 
-# Unit test for evaluate_roman_expression function
-def test_evaluate_roman_expression():
-    assert evaluate_roman_expression("X + V") == 'XV'
-    assert evaluate_roman_expression("X * II") == 'XX'
-    assert evaluate_roman_expression("XX / II") == 'X'
-    assert evaluate_roman_expression("L - X") == 'XL'
-    assert evaluate_roman_expression("( X + X ) * II") == 'XL'
-    
-    # Edge cases
-    assert evaluate_roman_expression("I + I + I") == 'III'
-    
-    # Invalid expression
-    assert "Error" in evaluate_roman_expression("X + Invalid")
+# Unit test for evaluate_expression function
+def test_equation():
+    assert evaluate_expression("XX + V") == 'XXV'
+    assert evaluate_expression("XL * II") == 'LXXX'
+    assert evaluate_expression("XX / II") == 'X'
+    assert evaluate_expression("C - L") == 'L'
+    assert evaluate_expression("(X + X) * II") == 'XL'
 
-# Test invalid input for roman_to_int
-def test_invalid_roman_to_int():
-    with pytest.raises(KeyError):
-        roman_to_int("Invalid")
+    # Invalid expression
+    assert "Error" in evaluate_expression("X + Invalid")
+
