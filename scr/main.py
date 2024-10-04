@@ -55,15 +55,16 @@ def int_roman(num):
 
     roman_numeral = ""
     
-    # Loop through the values in the map, appending Roman numerals while reducing the number
+    # Loop through the values in the conversio
     for value in conversion:
+        # while the number is greater than or equal to current value 
         while num >= value:
             roman_numeral += conversion[value]
             num -= value
 
     return roman_numeral
 
-# Process and evaluate an arithmetic expression that includes Roman numerals
+# Process and evaluate an algebraic expression that includes Roman numerals
 def equation(expression):
     """
     the function coverts the roman numeral operation into a integer then coverts 
@@ -71,7 +72,7 @@ def equation(expression):
     Args:
         expression is the algebraic expression that invloves the roman numerals
     Returns:
-        the answers to the algebraic experssion as roman numeral
+        the answers to the algebraic expression as roman numeral
     """
     try:
         # Helper function to replace Roman numerals with their integer equivalents
