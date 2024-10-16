@@ -1,47 +1,46 @@
 import re
 import sys
 
-# Convert a Roman numeral string into an integer
-def roman__int(roman):
+def roman_int(roman):
     """
-    Converts the Roman numeral string to a integer
+    Converts the Roman numeral string to an integer
 
     Args:
-        roman : represents the string for roman numeral 
+        roman : represents the string for a Roman numeral 
     Returns:
-        the integer relates to roman numeral 
+        the integer related to the Roman numeral 
     """
     roman_numerals = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
     total = 0
     prev_value = 0
 
     for numeral in roman:
-        current_value = roman_numerals[numeral]
+        current_value = roman_numerals.get(numeral)
+
+        if current_value is None:
+            raise ValueError(f"Invalid Roman numeral: {numeral}")
 
         if current_value > prev_value:
             total += current_value - 2 * prev_value
         else:
             total += current_value
 
-      
         prev_value = current_value
 
     return total
 
-# Convert an integer to a Roman numeral string
 def int_roman(num):
     """
-    Conversts the interger to a Roman Numeral
+    Converts the integer to a Roman Numeral
 
     Args:
-        num  : converts the integers to a roman numeral
+        num : converts the integer to a Roman numeral
 
     Returns:
-        the roman numeral that relates to the integer and if the 
-        roman numeral is greater than 3999 than it will print a message.
-
+        the Roman numeral related to the integer. If the 
+        integer is greater than 3999, a message is returned.
     """
-    conversion= {
+    conversion = {
         1000: "M", 900: "CM", 500: "D", 400: "CD", 100: "C", 90: "XC",
         50: "L", 40: "XL", 10: "X", 9: "IX", 5: "V", 4: "IV", 1: "I"
     }
@@ -55,35 +54,42 @@ def int_roman(num):
 
     roman_numeral = ""
     
-    # Loop through the values in the conversio
+    # Loop through the values in the map, appending Roman numerals while reducing the number
     for value in conversion:
-        # while the number is greater than or equal to current value 
         while num >= value:
             roman_numeral += conversion[value]
             num -= value
 
     return roman_numeral
 
-# Process and evaluate an algebraic expression that includes Roman numerals
 def equation(expression):
     """
-    the function coverts the roman numeral operation into a integer then coverts 
-     the results back to roman numeral 
+    Converts the Roman numeral operation into an integer then converts 
+    the result back to a Roman numeral 
+
+    This function:
+    - Converts any Roman numerals in the expression into integers.
+    - Evaluates the mathematical expression while respecting parentheses and order of operations.
+    - Converts the resulting integer back to a Roman numeral.
     Args:
-        expression is the algebraic expression that invloves the roman numerals
+        expression: the algebraic expression involving Roman numerals
+        
     Returns:
-        the answers to the algebraic expression as roman numeral
+        the result of the algebraic expression as a Roman numeral,or an error message if the expression is invalid.
     """
     try:
-        # Helper function to replace Roman numerals with their integer equivalents
+        # Replace Roman numerals with their integer equivalents
         def convert_roman(match):
             roman_numeral = match.group(0)  # Get the matched Roman numeral
-            return str(roman__int(roman_numeral))  # Convert it to integer as a string
+            return str(roman_int(roman_numeral))  # Convert it to integer as a string
 
-        # Searchs for the roman numeral and coverts it into a interger
-        expression_with_integers = re.sub(r'[IVXLCDM]+', convert_roman, expression)
+        def grouped_expr(expr):
+            while '(' in expr:
+                expr = re.sub(r'\(([^()]+)\)', lambda m: str(grouped_expr(m.group(1))), expr)
+            return eval(re.sub(r'[IVXLCDM]+', convert_roman, expr))
 
-        result = eval(expression_with_integers)
+        # Evaluate the expression respecting parentheses and Roman numeral conversions
+        result = grouped_expr(expression)
 
         # Handle special cases for Roman numeral results
         if isinstance(result, float):
@@ -99,27 +105,37 @@ def equation(expression):
         return int_roman(int(result))
 
     except Exception as error:
-        # Catch any unexpected errors and return a readable message
         return "The expression is invalid. Please try again."
 
-# User will enter input only in the command-line 
 def main():
-  """
-  The main function handles the command line input
-  Args:
-    user_input is expects the user to put an algebraic experssion in the command line
+    """
+    The main function handles the command line input
+    
+    This function:
+    - Accepts input from the command line, either as a single Roman numeral or an algebraic expression.
+    - If the input is a single Roman numeral, it converts it to an integer and displays the result.
+    - If the input is an algebraic expression with Roman numerals, it evaluates the expression
+      and displays the result in Roman numerals.
 
-  Returns:
-    will display the answers in roman numeral 
-  """
-if len(sys.argv) < 2:
-    sys.exit(1)
+    Args:
+        user_input: expects the user to input an algebraic expression in the command line
+    Returns:
+        Displays the answer in Roman numerals 
+        Also displays the English conversion for a single Roman numeral (e.g., III = 3)
+    """
+    if len(sys.argv) < 2:
+        return
     
-    user_input = sys.argv[1]
-    
-    # Evaluate the expression and display the result
-    final_result = equation(user_input)
-    print(final_result)
+    user_input = ' '.join(sys.argv[1:])
+
+    # If the input is a single Roman numeral, convert it to an integer
+    if re.match(r'^[IVXLCDM]+$', user_input):
+        value = roman_int(user_input)
+        print(f"English conversion: {value}")
+    else:
+        final_result = equation(user_input)
+        print(final_result)
 
 if __name__ == "__main__":
     main()
+ 
